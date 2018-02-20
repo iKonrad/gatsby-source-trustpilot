@@ -1,40 +1,40 @@
-import { TableNode, createTableItemFactory, getNodeTypeNameForTable } from './process';
-import ConfigException from './ConfigException';
 import Colors from 'colors';
-import Trustpilot from 'trustpilot';
+import Fetcher from './fetch';
+import { ReviewNode, SummaryNode } from "./nodes";
 
 exports.sourceNodes = async ({ boundActionCreators }, {
     apiKey,
     secretKey,
     username,
     password,
+    domains,
 }) => {
     const { createNode } = boundActionCreators;
-
-    if (!apiKey || apiKey === '') {
-        throw new ConfigException('Trustpilot API Key missing. Make sure to provide an API key in the config');
-    }
-
-    if (!secretKey || secretKey === '') {
-        throw new ConfigException('Trustpilot Secret Key missing. Make sure to provide a Secret Key in the config');
-    }
-
-    if (!username || username === '') {
-        throw new ConfigException('Trustpilot Username missing. Make sure to provide a username in the config');
-    }
-
-    if (!password || password === '') {
-        throw new ConfigException('Trustpilot Password missing. Make sure to provide a password in the config');
-    }
-
-    const client = new Trustpilot({
+    const client = new Fetcher({
         apiKey,
         secretKey,
         username,
         password,
+        domains,
     });
 
-    const res = await client.apiRequest(`/v1/business-units/find?apikey=${apiKey}&name=qualitycompanyformations.co.uk`);
+    // Get Business Unit IDs for given domains
+    await client.fetchUnitIdsForDomains();
 
-    return;
+    const reviewsSummary = await client.getSummary();
+    const recentReviews = await client.getRecentReviews();
+
+    // Create node for summaries
+    for (let summary of reviewsSummary) {
+        const summaryNode = SummaryNode(summary);
+        createNode(summaryNode);
+    }
+
+    for (let unitData of recentReviews) {
+        for (let review of unitData.reviews) {
+            review.unitId = unitData.unitId;
+            const reviewNodeObject = ReviewNode(review);
+            createNode(reviewNodeObject);
+        }
+    }
 };

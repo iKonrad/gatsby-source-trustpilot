@@ -1,6 +1,6 @@
 {
   "name": "gatsby-source-trustpilot",
-  "version": "0.0.411",
+  "version": "0.0.417",
   "description": "Source plugin for pulling the reviews data from Trustpilot",
   "main": "gatsby-node.js",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "babel src --out-dir . --ignore __tests__",
-    "prepublishOnly": "cross-env NODE_ENV=production npm run build",
+    "prepublish": "cross-env NODE_ENV=production npm run build",
     "watch": "babel -w src --out-dir . --ignore __tests__"
   },
   "bugs": {
