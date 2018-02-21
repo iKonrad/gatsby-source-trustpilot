@@ -59,10 +59,16 @@ class TrustPilotFetcher {
         return results;
     }
 
-    async getRecentReviews() {
+    createQueryString(params) {
+        return Object.keys(params).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
+    }
+
+    async getRecentReviews(params) {
         let results = [];
+
+        const queryString = this.createQueryString(params);
         for (let unit of this.unitIds) {
-            let result = await this.client.apiRequest(`/v1/business-units/${unit.unitId}/reviews?stars=5&language=en`);
+            let result = await this.client.apiRequest(`/v1/business-units/${unit.unitId}/reviews?${queryString}`);
             result.unitId = unit.unitId;
             results.push(result);
         }

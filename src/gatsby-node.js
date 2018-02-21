@@ -32,23 +32,31 @@ exports.sourceNodes = async ({ boundActionCreators }, {
     const reviewsSummary = await client.getSummary();
     logSuccess(`Fetched`, `${reviewsSummary.length}`.magenta, ` summary items`);
 
-    const recentReviews = await client.getRecentReviews();
+    const recentReviews = await client.getRecentReviews({stars: 5});
 
     // Create node for summaries
     for (let summary of reviewsSummary) {
+        const currentUnit = client.unitIds.filter(({ unitId }) => unitId === summary.unitId);
+        summary.domain = currentUnit[0].domain;
         const summaryNode = SummaryNode(summary);
         createNode(summaryNode);
     }
 
     for (let unitData of recentReviews) {
         let reviewsCount = 0;
+        // Get current unit so we can attach the domain to the review
+        const currentUnit = client.unitIds.filter(({ unitId }) => unitId === unitData.unitId);
+
+        // Create nodes for individual reviews
         for (let review of unitData.reviews) {
             reviewsCount++;
             review.unitId = unitData.unitId;
+            review.domain = currentUnit[0].domain;
             const reviewNodeObject = ReviewNode(review);
             createNode(reviewNodeObject);
         }
-        logSuccess('Fetched ', `${reviewsCount}`.magenta, ' reviews for ', `${unitData.unitId}`.magenta, ' Business Unit ID');
+
+        logSuccess('Fetched ', `${reviewsCount}`.magenta, ' reviews for ', `${currentUnit[0].domain}`.magenta, ' Business Unit ID');
     }
 };
 
