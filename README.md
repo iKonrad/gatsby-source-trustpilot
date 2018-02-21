@@ -14,8 +14,8 @@ Source plugin for pulling Trustpilot data into [Gatsby](https://github.com/gatsb
 ```javascript
 module.exports = {
   siteMetadata: {
-    title: `A sample site using Directus API`,
-    subtitle: `My sample site using Directus`,
+    title: `A sample site using TrustPilot API`,
+    subtitle: `My sample site using TrustPilot`,
   },
   plugins: [
       {
