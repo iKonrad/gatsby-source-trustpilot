@@ -48,7 +48,7 @@ exports.sourceNodes = async ({ boundActionCreators }, {
             const reviewNodeObject = ReviewNode(review);
             createNode(reviewNodeObject);
         }
-        logSuccess('Fetched ', `${reviewsCount}`.magenta, ' reviews for ', `${unitData.redirectUri}`.magenta, ' Business Unit ID');
+        logSuccess('Fetched ', `${reviewsCount}`.magenta, ' reviews for ', `${unitData.unitId}`.magenta, ' Business Unit ID');
     }
 };
 
