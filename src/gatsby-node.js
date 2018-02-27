@@ -30,7 +30,7 @@ exports.sourceNodes = async ({ boundActionCreators }, {
     }
 
     const reviewsSummary = await client.getSummary();
-    logSuccess(`Fetched`, `${reviewsSummary.length}`.magenta, ` summary items`);
+    logSuccess(`Fetched `, `${reviewsSummary.length}`.magenta, ` summary items`);
 
     const recentReviews = await client.getRecentReviews({stars: 5});
 
