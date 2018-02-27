@@ -32,7 +32,7 @@ exports.sourceNodes = async ({ boundActionCreators }, {
     const reviewsSummary = await client.getSummary();
     logSuccess(`Fetched `, `${reviewsSummary.length}`.magenta, ` summary items`);
 
-    const recentReviews = await client.getRecentReviews({stars: 5});
+    const recentReviews = await client.getRecentReviews({perPage: 100});
 
     // Create node for summaries
     for (let summary of reviewsSummary) {
