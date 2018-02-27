@@ -68,11 +68,24 @@ class TrustPilotFetcher {
 
         const queryString = this.createQueryString(params);
         for (let unit of this.unitIds) {
-            let result = await this.client.apiRequest(`/v1/business-units/${unit.unitId}/reviews?${queryString}`);
+            let result = await this.getReviews(`/v1/business-units/${unit.unitId}/reviews?${queryString}`);
             result.unitId = unit.unitId;
             results.push(result);
         }
         return results;
+    }
+
+    async getReviews(link) {
+        let fragment = await this.client.apiRequest(link);
+        let nextPage = fragment.links.find(function (link) {
+            return link.rel == "next-page";
+        });
+        
+        if (nextPage) {
+            fragment.reviews = fragment.reviews.concat((await this.getReviews(nextPage.href.replace(this.client.baseUrl, ''))).reviews);
+        }
+
+        return fragment;
     }
 }
 
