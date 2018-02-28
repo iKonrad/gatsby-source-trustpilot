@@ -75,8 +75,8 @@ class TrustPilotFetcher {
         return results;
     }
 
-    async getReviews(link) {
-        let fragment = await this.client.apiRequest(link);
+    async getReviews(uri) {
+        let fragment = await this.client.apiRequest(uri);
         let nextPage = fragment.links.find(function (link) {
             return link.rel == "next-page";
         });
