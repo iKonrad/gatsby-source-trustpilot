@@ -1,4 +1,4 @@
-import Trustpilot from 'trustpilot';
+import { TrustpilotApi } from 'trustpilot';
 import ConfigException from './ConfigException';
 
 class TrustPilotFetcher {
@@ -29,9 +29,10 @@ class TrustPilotFetcher {
         this.password = password;
         this.domains = domains;
         this.unitIds = [];
-        this.client = new Trustpilot({
-            apiKey,
-            secretKey,
+
+        this.client = new TrustpilotApi({
+            key: apiKey,
+            secret: secretKey,
         });
     }
 
