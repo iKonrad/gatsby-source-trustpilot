@@ -1,6 +1,6 @@
 {
   "name": "gatsby-source-trustpilot",
-  "version": "0.0.46",
+  "version": "0.1.0",
   "description": "Source plugin for pulling the reviews data from Trustpilot",
   "main": "gatsby-node.js",
   "repository": {
