@@ -1,3 +1,4 @@
+import '@babel/polyfill';
 import Colors from 'colors';
 import Fetcher from './fetch';
 import { ReviewNode, SummaryNode } from './nodes';
