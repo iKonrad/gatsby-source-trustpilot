@@ -31,58 +31,72 @@ class TrustPilotFetcher {
         this.unitIds = [];
         this.client = new Trustpilot({
             apiKey,
-            secretKey
-        })
+            secretKey,
+        });
     }
 
     async fetchUnitIdsForDomains() {
         // Map domain names with Unit IDs
         const unitPromises = await this.domains.map(async domain => {
             const res = await this.client.apiRequest(`/v1/business-units/find?apikey=${this.apiKey}&name=${domain}`);
-            if (!res || !res.id) { throw new ConfigException(`Business Unit ID not found for domain: ${domain}`); };
+
+            if (!res || !res.id) {
+                throw new ConfigException(`Business Unit ID not found for domain: ${domain}`);
+            }
+
             this.unitIds.push({
                 domain,
                 unitId: res.id,
             });
+
             return res;
         });
+
         await Promise.all(unitPromises);
     }
 
     async getSummary() {
         let results = [];
+
         for (let unit of this.unitIds) {
             let result = await this.client.apiRequest(`/v1/business-units/${unit.unitId}/`);
+
             result.unitId = unit.unitId;
             results.push(result);
         }
+
         return results;
     }
 
     createQueryString(params) {
-        return Object.keys(params).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
+        return Object.keys(params).map(k =>
+            `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`
+        ).join('&');
     }
 
     async getRecentReviews(params) {
         let results = [];
-
         const queryString = this.createQueryString(params);
+
         for (let unit of this.unitIds) {
             let result = await this.getReviews(`/v1/business-units/${unit.unitId}/reviews?${queryString}`);
             result.unitId = unit.unitId;
             results.push(result);
         }
+
         return results;
     }
 
     async getReviews(uri) {
         let fragment = await this.client.apiRequest(uri);
         let nextPage = fragment.links.find(function (link) {
-            return link.rel == "next-page";
+            return link.rel === 'next-page';
         });
-        
+
         if (nextPage) {
-            fragment.reviews = fragment.reviews.concat((await this.getReviews(nextPage.href.replace(this.client.baseUrl, ''))).reviews);
+            fragment.reviews = fragment.reviews.concat((
+                await this.getReviews(nextPage.href.replace(this.client.baseUrl, ''))
+            ).reviews);
         }
 
         return fragment;
