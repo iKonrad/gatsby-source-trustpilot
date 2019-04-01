@@ -39,7 +39,9 @@ class TrustPilotFetcher {
     async fetchUnitIdsForDomains() {
         // Map domain names with Unit IDs
         const unitPromises = await this.domains.map(async domain => {
-            const res = await this.client.apiRequest(`/v1/business-units/find?apikey=${this.apiKey}&name=${domain}`);
+            const res = await this.client.apiRequest(
+                `https://api.trustpilot.com/v1/business-units/find?apikey=${this.apiKey}&name=${domain}`
+            );
 
             if (!res || !res.id) {
                 throw new ConfigException(`Business Unit ID not found for domain: ${domain}`);
@@ -60,7 +62,9 @@ class TrustPilotFetcher {
         let results = [];
 
         for (let unit of this.unitIds) {
-            let result = await this.client.apiRequest(`/v1/business-units/${unit.unitId}/`);
+            let result = await this.client.apiRequest(
+                `https://api.trustpilot.com/v1/business-units/${unit.unitId}`,
+            );
 
             result.unitId = unit.unitId;
             results.push(result);
@@ -79,8 +83,13 @@ class TrustPilotFetcher {
         let results = [];
         const queryString = this.createQueryString(params);
 
+        // console.log('Query string:', { queryString, params });
+
         for (let unit of this.unitIds) {
-            let result = await this.getReviews(`/v1/business-units/${unit.unitId}/reviews?${queryString}`);
+            let result = await this.getReviews(
+                `https://api.trustpilot.com/v1/business-units/${unit.unitId}/reviews?${queryString}`,
+            );
+
             result.unitId = unit.unitId;
             results.push(result);
         }

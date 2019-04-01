@@ -18,7 +18,7 @@ exports.sourceNodes = async ({ boundActionCreators }, {
         password,
         domains,
     });
-
+    
     logInfo('Connecting to the Trustpilot API...');
 
     // Get Business Unit IDs for given domains
