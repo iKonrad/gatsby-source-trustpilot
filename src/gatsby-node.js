@@ -1,6 +1,7 @@
+import '@babel/polyfill';
 import Colors from 'colors';
 import Fetcher from './fetch';
-import { ReviewNode, SummaryNode } from "./nodes";
+import { ReviewNode, SummaryNode } from './nodes';
 
 exports.sourceNodes = async ({ boundActionCreators }, {
     apiKey,
@@ -30,6 +31,7 @@ exports.sourceNodes = async ({ boundActionCreators }, {
     }
 
     const reviewsSummary = await client.getSummary();
+
     logSuccess(`Fetched `, `${reviewsSummary.length}`.magenta, ` summary items`);
 
     const recentReviews = await client.getRecentReviews({perPage: 100});
@@ -37,13 +39,15 @@ exports.sourceNodes = async ({ boundActionCreators }, {
     // Create node for summaries
     for (let summary of reviewsSummary) {
         const currentUnit = client.unitIds.filter(({ unitId }) => unitId === summary.unitId);
-        summary.domain = currentUnit[0].domain;
         const summaryNode = SummaryNode(summary);
+
+        summary.domain = currentUnit[0].domain;
         createNode(summaryNode);
     }
 
     for (let unitData of recentReviews) {
         let reviewsCount = 0;
+
         // Get current unit so we can attach the domain to the review
         const currentUnit = client.unitIds.filter(({ unitId }) => unitId === unitData.unitId);
 
@@ -60,19 +64,18 @@ exports.sourceNodes = async ({ boundActionCreators }, {
     }
 };
 
-
 const logWarning = (...text) => {
     console.log('\ngatsby-source-trustpilot '.cyan, 'warning '.yellow, ...text);
-}
+};
 
 const logError = (...text) => {
     console.log('\ngatsby-source-trustpilot '.cyan, 'success '.red, ...text);
-}
+};
 
 const logSuccess = (...text) => {
     console.log('\ngatsby-source-trustpilot '.cyan, 'success '.green, ...text);
-}
+};
 
 const logInfo = (...text) => {
     console.log('\ngatsby-source-trustpilot '.cyan, 'info '.blue, ...text);
-}
+};
